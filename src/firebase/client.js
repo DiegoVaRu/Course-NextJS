@@ -64,3 +64,7 @@ export const logout = async () => {
     console.log(`Logout Failed: ${e}`)
   }
 }
+
+export const addDevit = ({ avatar, content, userId, userName }) => {
+
+}
