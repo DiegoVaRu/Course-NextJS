@@ -1,95 +1,49 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import '../styles/Home.css'
+import Button from '@/components/ui/Button'
+import Avatar from '@/components/ui/Avatar'
+import Image from 'next/image'
+import GitHub from '@/components/ui/GitHub'
+import { authStateChanged, loginWithGitHub } from '@/firebase/client'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import useUser from '@/hooks/useUser'
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const { user } = useUser()
+  const router = useRouter() 
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  useEffect(() => {
+    user && router.replace('/home')
+  }, [user])
+
+  const handleClick = async () => {
+    const user = await loginWithGitHub()
+    console.log(user)
+  }
+
+  return (
+    <>
+      <Image src="/devter-logo.png" width={160} height={155} alt="Logo" />
+      <h1>Dev<span>.</span>ter</h1>
+      {
+        user === undefined &&
+        <Image src='/loading.svg'
+        width={80} height={80}
+        alt='Loading...'/>
+      }
+      {
+        user === null && (
+          <>
+            <h2><span>&lt;</span>Develop your talk<br />with developers <span>/&gt;</span></h2>
+            <Button onClick={handleClick}>
+              <GitHub width='26px' height='26px' fill='#fff' />
+              Login with GitHub
+            </Button>
+          </>
+        )
+      }
+    </>
   );
 }
